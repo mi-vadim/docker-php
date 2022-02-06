@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: ./build/php/Dockerfile
+      target: local
+    container_name: application
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    tty: true
+    depends_on:
+      - database
+      - cache
+    restart: on-failure
+    volumes:
+      - .:/var/www
+      - php_socket:/var/run/php
+    working_dir: /var/www
+    networks:
+      - application-network
+
+  nginx:
+    image: nginx:1.21.6
+    container_name: web-server
+    restart: on-failure
+    tty: true
+    volumes:
+      - .:/var/www
+      - ./build/nginx:/etc/ngnix
+    working_dir: /var/www
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - application-network
+
+  postgres:
+    image: postgres:14.1-bullseye
+    container_name: database
+    restart: on-failure
+    tty: true
+    environment:
+      - POSTGRES_DB=application
+      - POSTGRES_USER=application_user
+      - POSTGRES_PASSWORD=application_password
+    volumes:
+      - .:/var/www
+      - database-storage:/var/lib/postgresql
+    ports:
+      -   "5432:5432"
+    networks:
+      - application-network
+
+  redis:
+    image: redis:6.2.6-bullseye
+    container_name: cache
+    restart: on-failure
+    tty: true
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache-storage:/data
+    networks:
+      - application-network
+
+networks:
+  application-network:
+    driver: bridge
+
+volumes:
+  php_socket:
+    driver: local
+  database-storage:
+    driver: local
+  cache-storage:
+    driver: local
