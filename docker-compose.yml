@@ -30,7 +30,7 @@ services:
     tty: true
     volumes:
       - .:/var/www
-      - ./build/nginx:/etc/ngnix
+      - ./build/nginx/conf.d:/etc/nginx/conf.d
     working_dir: /var/www
     ports:
       - "80:80"
