@@ -19,7 +19,6 @@ services:
     restart: on-failure
     volumes:
       - .:/var/www
-      - php_socket:/var/run/php
     working_dir: /var/www
     networks:
       - application-network
@@ -73,8 +72,6 @@ networks:
     driver: bridge
 
 volumes:
-  php_socket:
-    driver: local
   database-storage:
     driver: local
   cache-storage:
