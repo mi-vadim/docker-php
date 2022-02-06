@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y  \
     libpq-dev \
     zip unzip \
   && pecl install apcu-${APCU_VERSION} redis \
-  && docker-php-ext-install -j$(nproc) mysqli pdo intl pdo_pgsql\
+  && docker-php-ext-install -j$(nproc) pdo intl pdo_pgsql\
   && docker-php-ext-configure intl \
   && docker-php-ext-enable redis apcu opcache
 
@@ -41,7 +41,6 @@ FROM base as local
 ARG APP_ENV=local
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
-
 
 COPY build/php/conf.d/application.dev.ini $PHP_INI_DIR/conf.d/application.ini
 COPY build/php/conf.d/xdebug.ini $PHP_INI_DIR/conf.d/xdebug.ini
