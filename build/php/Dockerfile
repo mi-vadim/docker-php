@@ -1,4 +1,5 @@
 ARG PHP_VERSION=8.1
+ARG environment
 
 FROM php:${PHP_VERSION}-fpm-bullseye as base
 ARG APCU_VERSION=5.1.21
@@ -37,22 +38,16 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 COPY build/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
-FROM base as local
+FROM base as image-local
 ARG APP_ENV=local
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.1.2 && docker-php-ext-enable xdebug
 
 COPY build/php/conf.d/application.dev.ini $PHP_INI_DIR/conf.d/application.ini
 COPY build/php/conf.d/xdebug.ini $PHP_INI_DIR/conf.d/xdebug.ini
-COPY build/php/conf.d/error_reporting.ini $PHP_INI_DIR/conf.d/error_reporting.ini
-
-EXPOSE 9000
-
-ENTRYPOINT ["docker-entrypoint"]
-CMD ["php-fpm"]
 
 
-FROM base as production
+FROM base as image-production
 ARG APP_ENV=prod
 
 COPY build/php/conf.d/application.prod.ini $PHP_INI_DIR/conf.d/application.ini
@@ -70,6 +65,8 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	sync
+
+FROM image-$environment as build
 
 USER www
 EXPOSE 9000

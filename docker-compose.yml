@@ -5,7 +5,9 @@ services:
     build:
       context: .
       dockerfile: ./build/php/Dockerfile
-      target: local
+      args:
+        environment: local
+      target: build
     container_name: application
     healthcheck:
       interval: 10s
