@@ -19,7 +19,8 @@
  - **Redis Image**
 
 ### How to build:
- - run `docker compose run --build`
+ - if it is your first launch `make build up`
+ - else `make up`
  - done!
 
 ## Currently using images:
