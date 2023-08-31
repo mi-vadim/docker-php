@@ -1,8 +1,8 @@
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.2.6
 ARG environment
 
 FROM php:${PHP_VERSION}-fpm-bullseye as base
-ARG APCU_VERSION=5.1.21
+ARG APCU_VERSION=5.1.22
 
 RUN apt-get update && apt-get install -y  \
     acl \
@@ -41,7 +41,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint
 FROM base as image-local
 ARG APP_ENV=local
 
-RUN pecl install xdebug-3.1.2 && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.2.2 && docker-php-ext-enable xdebug
 
 COPY build/php/conf.d/application.dev.ini $PHP_INI_DIR/conf.d/application.ini
 COPY build/php/conf.d/xdebug.ini $PHP_INI_DIR/conf.d/xdebug.ini
