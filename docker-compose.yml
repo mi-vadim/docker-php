@@ -9,15 +9,10 @@ services:
         environment: local
       target: build
     container_name: application
-    healthcheck:
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 30s
     tty: true
     depends_on:
-      - database
-      - cache
+      - postgres
+      - redis
     restart: on-failure
     volumes:
       - .:/var/www
