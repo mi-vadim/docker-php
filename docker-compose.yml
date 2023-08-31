@@ -28,6 +28,7 @@ services:
     volumes:
       - .:/var/www
       - ./build/nginx/conf.d:/etc/nginx/conf.d
+      - ./build/nginx/ngnix.conf:/etc/nginx/ngnix.conf
     working_dir: /var/www
     ports:
       - "80:80"
